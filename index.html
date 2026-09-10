@@ -1,65 +1,130 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<meta name="theme-color" content="#0f172a"/>
-<title>Oficina</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--bg:#f5f7fb;--card:#fff;--ink:#101828;--muted:#667085;--line:#d0d5dd;--blue:#155eef;--blue2:#0b4bcc;--green:#067647;--red:#b42318;--nav:#0f172a;--r:18px}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:17px}.top{position:sticky;top:0;z-index:10;background:var(--nav);color:#fff;padding:16px max(16px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:space-between}.top h1{font-size:22px;margin:0}.top small{display:block;color:#cbd5e1;margin-top:2px}.shell{max-width:760px;margin:0 auto;padding:16px 16px calc(100px + env(safe-area-inset-bottom))}.view{display:none}.view.active{display:block}.card{background:var(--card);border:1px solid #e4e7ec;border-radius:var(--r);padding:18px;margin:14px 0;box-shadow:0 2px 8px rgba(16,24,40,.04)}h2,h3{margin:0 0 14px}.muted{color:var(--muted)}.btn{width:100%;min-height:58px;border:0;border-radius:14px;font-size:18px;font-weight:800;padding:12px 16px;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.primary:active{background:var(--blue2)}.btn.secondary{background:#eef4ff;color:#1849a9}.btn.dark{background:#101828;color:#fff}.btn.danger{background:#fee4e2;color:#912018}.btn+.btn{margin-top:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{min-height:112px;background:#fff;border:1px solid #d0d5dd;border-radius:18px;padding:16px;text-align:left;font-size:18px;font-weight:800}.tile span{font-size:28px;display:block;margin-bottom:8px}label{display:block;font-weight:750;margin:14px 0 6px}input,select,textarea{width:100%;min-height:54px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:18px;padding:12px;color:var(--ink)}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:3px solid #d1e0ff;border-color:var(--blue)}.photo{display:flex;align-items:center;gap:14px;min-height:92px;border:2px dashed #84adff;background:#f5f8ff;border-radius:14px;padding:14px;cursor:pointer}.photo input{display:none}.photo .ico{font-size:32px}.photo strong{display:block}.photo small{display:block;color:var(--muted);margin-top:4px}.preview{display:flex;gap:8px;overflow:auto;margin-top:10px}.preview img{height:90px;width:110px;object-fit:cover;border-radius:10px;border:1px solid #ddd}.list{display:grid;gap:10px;margin-top:12px}.row{background:#fff;border:1px solid #e4e7ec;border-radius:14px;padding:14px;display:flex;justify-content:space-between;gap:10px;align-items:center}.row strong{display:block}.row small{display:block;color:var(--muted);margin-top:4px}.pill{display:inline-block;border-radius:999px;padding:5px 9px;background:#ecfdf3;color:var(--green);font-weight:800;font-size:13px}.back{border:0;background:transparent;color:#344054;font-size:17px;font-weight:800;padding:8px 0}.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e4e7ec;padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);z-index:20}.nav button{border:0;background:transparent;min-height:54px;font-size:12px;font-weight:800;color:#667085}.nav button span{display:block;font-size:22px;margin-bottom:2px}.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:12px}.sectionHead .btn{width:auto;min-height:46px;font-size:15px;padding:8px 12px}.loginWrap{max-width:460px;margin:40px auto}.logo{width:68px;height:68px;border-radius:18px;background:#155eef;color:#fff;display:grid;place-items:center;font-size:34px;margin-bottom:18px}.error{background:#fee4e2;color:#912018;padding:12px;border-radius:10px;margin-top:12px}.ok{background:#dcfae6;color:#05603a;padding:12px;border-radius:10px;margin-top:12px}.part{border:1px solid #e4e7ec;border-radius:12px;padding:12px;margin-top:10px}.actions{display:flex;gap:8px}.actions button{min-height:44px;border-radius:10px;border:0;padding:8px 12px;font-weight:800}.loading{opacity:.55;pointer-events:none}.hero{background:linear-gradient(135deg,#0f172a,#1d2939);color:#fff;border-radius:20px;padding:20px}.hero p{color:#d0d5dd;margin-bottom:0}.big{font-size:32px;font-weight:900;letter-spacing:-1px}.empty{text-align:center;color:#667085;padding:24px}.hidden{display:none!important}@media(max-width:480px){body{font-size:16px}.shell{padding:12px 12px 96px}.grid2{grid-template-columns:1fr 1fr}.tile{min-height:100px;padding:13px}.card{padding:15px}.btn{min-height:60px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <title>Oficina</title>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<header class="top"><div><h1>Oficina</h1><small id="userLabel">Gestão simples de oficina</small></div><button id="logoutBtn" class="hidden" style="border:0;background:#fff;color:#111827;border-radius:10px;padding:9px 12px;font-weight:800">Sair</button></header>
+<header class="top">
+  <div><h1>🔧 Oficina</h1><small id="userLabel">Gestão simples de oficina</small></div>
+  <button id="logoutBtn" class="topBtn hidden">Sair</button>
+</header>
+
 <main class="shell">
-<section id="authView" class="view active"><div class="loginWrap"><div class="logo">🔧</div><h2>Entrar na oficina</h2><p class="muted">Use o seu email e palavra-passe. Os dados ficam protegidos por utilizador.</p><div class="card"><label>Email</label><input id="email" type="email" autocomplete="email" placeholder="nome@oficina.pt"><label>Palavra-passe</label><input id="password" type="password" autocomplete="current-password" placeholder="Mínimo 6 caracteres"><button class="btn primary" id="loginBtn" style="margin-top:16px">Entrar</button><button class="btn secondary" id="signupBtn">Criar conta</button><button class="btn secondary" id="forgotBtn">Esqueci-me da palavra-passe</button><div id="authMsg"></div></div></div></section>
-<section id="resetView" class="view"><div class="loginWrap"><div class="logo">🔐</div><h2>Definir nova palavra-passe</h2><p class="muted">Escolha uma nova palavra-passe para a sua conta.</p><div class="card"><label>Nova palavra-passe</label><input id="newPassword" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres"><label>Confirmar nova palavra-passe</label><input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Repita a palavra-passe"><button class="btn primary" id="updatePasswordBtn" style="margin-top:16px">Guardar nova palavra-passe</button><div id="resetMsg"></div></div></div></section>
-<section id="homeView" class="view"><div class="hero"><div class="big">Registar sem complicações.</div><p>Matrícula → quilómetros → trabalho → peças → fotografias → guardar.</p></div><div class="card"><button class="btn primary" onclick="showView('interventionView')">＋ Nova intervenção</button></div><div class="grid2"><button class="tile" onclick="showView('vehiclesView')"><span>🚗</span>Viaturas</button><button class="tile" onclick="showView('clientsView')"><span>👤</span>Clientes</button><button class="tile" onclick="showView('historyView')"><span>🧾</span>Histórico</button><button class="tile" onclick="loadDashboard()"><span>↻</span>Atualizar</button></div><div class="card"><h3>Resumo</h3><div class="grid2"><div><div class="big" id="countClients">0</div><span class="muted">Clientes</span></div><div><div class="big" id="countVehicles">0</div><span class="muted">Viaturas</span></div></div></div></section>
-<section id="clientsView" class="view"><button class="back" onclick="showView('homeView')">← Voltar</button><div class="sectionHead"><h2>Clientes</h2><button class="btn primary" onclick="openClientForm()">＋ Novo</button></div><input id="clientSearch" placeholder="Pesquisar por nome ou telefone" oninput="renderClients()"><div id="clientFormCard" class="card hidden"><h3 id="clientFormTitle">Novo cliente</h3><input id="clientId" type="hidden"><label>Nome</label><input id="clientName" placeholder="Nome do cliente"><label>Telemóvel</label><input id="clientPhone" type="tel" placeholder="912 345 678"><label>Email</label><input id="clientEmail" type="email" placeholder="cliente@email.pt"><label>NIF</label><input id="clientNif" inputmode="numeric"><label>Notas</label><textarea id="clientNotes" placeholder="Informação útil sobre o cliente"></textarea><button class="btn primary" onclick="saveClient()">✓ Guardar cliente</button><button class="btn secondary" onclick="closeClientForm()">Cancelar</button></div><div id="clientList" class="list"></div></section>
-<section id="vehiclesView" class="view"><button class="back" onclick="showView('homeView')">← Voltar</button><div class="sectionHead"><h2>Viaturas</h2><button class="btn primary" onclick="openVehicleForm()">＋ Nova</button></div><input id="vehicleSearch" placeholder="Pesquisar matrícula, marca ou modelo" oninput="renderVehicles()"><div id="vehicleFormCard" class="card hidden"><h3 id="vehicleFormTitle">Nova viatura</h3><input id="vehicleId" type="hidden"><label>Matrícula</label><input id="vehiclePlate" placeholder="00-AA-00" style="text-transform:uppercase"><label>Cliente</label><select id="vehicleClient"></select><div class="grid2"><div><label>Marca</label><input id="vehicleBrand" placeholder="BMW"></div><div><label>Modelo</label><input id="vehicleModel" placeholder="320d"></div></div><div class="grid2"><div><label>Ano</label><input id="vehicleYear" type="number" inputmode="numeric"></div><div><label>Quilómetros</label><input id="vehicleKm" type="number" inputmode="numeric"></div></div><label>VIN / Chassis</label><input id="vehicleVin"><label>Notas</label><textarea id="vehicleNotes"></textarea><button class="btn primary" onclick="saveVehicle()">✓ Guardar viatura</button><button class="btn secondary" onclick="closeVehicleForm()">Cancelar</button></div><div id="vehicleList" class="list"></div></section>
-<section id="interventionView" class="view"><button class="back" onclick="showView('homeView')">← Voltar</button><h2>Nova intervenção</h2><div class="card"><h3>1. Viatura</h3><label>Matrícula</label><input id="intPlate" placeholder="00-AA-00" style="text-transform:uppercase"><button class="btn secondary" onclick="findVehicleByPlate()">Pesquisar matrícula</button><div id="vehicleMatch"></div></div><div class="card"><h3>2. Entrada</h3><label>Data</label><input id="intDate" type="date"><label>Quilómetros</label><input id="intKm" type="number" inputmode="numeric" placeholder="126430"><label class="photo"><input id="odoPhoto" type="file" accept="image/*" capture="environment"><span class="ico">📷</span><span><strong>Fotografia do conta-quilómetros</strong><small>Tocar para tirar fotografia</small></span></label><div id="odoPreview" class="preview"></div></div><div class="card"><h3>3. Trabalho realizado</h3><label>Tipo de serviço</label><input id="serviceType" placeholder="Ex.: Revisão, travões, diagnóstico"><label>Descrição</label><textarea id="workDesc" placeholder="O que foi feito e o que foi encontrado"></textarea><div class="sectionHead"><h3 style="margin:16px 0 0">Peças</h3><button class="btn secondary" onclick="addPart()">＋ Peça</button></div><div id="parts"></div><label class="photo"><input id="workPhotos" type="file" accept="image/*" capture="environment" multiple><span class="ico">📷</span><span><strong>Fotografias do trabalho</strong><small>Peças antigas, novas, danos ou montagem</small></span></label><div id="workPreview" class="preview"></div><label>Observações</label><textarea id="intNotes" placeholder="Opcional"></textarea><button class="btn primary" id="saveInterventionBtn" onclick="saveIntervention()">✓ Terminar e guardar</button><div id="intMsg"></div></div></section>
-<section id="historyView" class="view"><button class="back" onclick="showView('homeView')">← Voltar</button><h2>Histórico</h2><input id="historySearch" placeholder="Pesquisar matrícula ou serviço" oninput="renderHistory()"><div id="historyList" class="list"></div></section>
+  <section id="authView" class="view active">
+    <div class="loginWrap">
+      <div class="logo">🔧</div><h2>Entrar na oficina</h2>
+      <p class="muted">Acesso exclusivo aos dados desta oficina.</p>
+      <div class="card">
+        <label>Email</label><input id="email" type="email" autocomplete="email" placeholder="nome@oficina.pt">
+        <label>Palavra-passe</label><input id="password" type="password" autocomplete="current-password" placeholder="Mínimo 6 caracteres">
+        <button class="btn primary" id="loginBtn">Entrar</button>
+        <button class="btn secondary" id="signupBtn">Criar conta</button>
+        <button class="btn linkBtn" id="forgotBtn">Esqueci-me da palavra-passe</button>
+        <div id="authMsg"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="resetView" class="view">
+    <div class="loginWrap"><div class="logo">🔐</div><h2>Definir nova palavra-passe</h2>
+      <div class="card">
+        <label>Nova palavra-passe</label><input id="newPassword" type="password" autocomplete="new-password">
+        <label>Confirmar palavra-passe</label><input id="confirmPassword" type="password" autocomplete="new-password">
+        <button class="btn primary" id="updatePasswordBtn">Guardar nova palavra-passe</button>
+        <div id="resetMsg"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="homeView" class="view">
+    <div class="hero"><div class="big">Registar sem complicações.</div><p>Matrícula → km → trabalho → peças → fotografias → guardar.</p></div>
+    <div class="card"><button class="btn primary" onclick="showView('interventionView')">＋ Nova intervenção</button></div>
+    <div class="grid2">
+      <button class="tile" onclick="showView('vehiclesView')"><span>🚗</span>Viaturas</button>
+      <button class="tile" onclick="showView('clientsView')"><span>👤</span>Clientes</button>
+      <button class="tile" onclick="showView('historyView')"><span>🧾</span>Histórico</button>
+      <button class="tile" onclick="loadDashboard()"><span>↻</span>Atualizar</button>
+    </div>
+    <div class="card"><h3>Resumo</h3><div class="grid2"><div><div class="big" id="countClients">0</div><span class="muted">Clientes</span></div><div><div class="big" id="countVehicles">0</div><span class="muted">Viaturas</span></div></div></div>
+  </section>
+
+  <section id="clientsView" class="view">
+    <button class="back" onclick="showView('homeView')">← Voltar</button>
+    <div class="sectionHead"><h2>Clientes</h2><button class="btn primary compact" onclick="openClientForm()">＋ Novo</button></div>
+    <input id="clientSearch" placeholder="Pesquisar nome, telefone ou matrícula" oninput="renderClients()">
+    <div id="clientFormCard" class="card hidden">
+      <h3 id="clientFormTitle">Novo cliente</h3><input id="clientId" type="hidden">
+      <label>Nome <span class="required">*</span></label><input id="clientName">
+      <label>Telemóvel</label><input id="clientPhone" type="tel">
+      <label>Email</label><input id="clientEmail" type="email">
+      <label>NIF</label><input id="clientNif" inputmode="numeric">
+      <label>Notas</label><textarea id="clientNotes"></textarea>
+      <button class="btn primary" onclick="saveClient()">✓ Guardar cliente</button>
+      <button class="btn secondary" onclick="closeClientForm()">Cancelar</button>
+    </div>
+    <div id="clientList"></div>
+  </section>
+
+  <section id="vehiclesView" class="view">
+    <button class="back" onclick="showView('homeView')">← Voltar</button>
+    <div class="sectionHead"><h2>Viaturas</h2><button class="btn primary compact" onclick="openVehicleForm()">＋ Nova</button></div>
+    <input id="vehicleSearch" placeholder="Pesquisar matrícula, marca, modelo ou cor" oninput="renderVehicles()">
+    <div id="vehicleFormCard" class="card hidden">
+      <h3 id="vehicleFormTitle">Nova viatura</h3><input id="vehicleId" type="hidden">
+      <label>Matrícula <span class="required">*</span></label><input id="vehiclePlate" placeholder="00-AA-00" class="uppercase">
+      <label>Cliente <span class="required">*</span></label><select id="vehicleClient"></select>
+      <div class="grid2">
+        <div><label>Marca <span class="required">*</span></label><input id="vehicleBrand" placeholder="BMW"></div>
+        <div><label>Modelo <span class="required">*</span></label><input id="vehicleModel" placeholder="320d"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Cor <span class="required">*</span></label><input id="vehicleColor" placeholder="Preto"></div>
+        <div><label>Ano</label><input id="vehicleYear" type="number" inputmode="numeric"></div>
+      </div>
+      <label>Quilómetros</label><input id="vehicleKm" type="number" inputmode="numeric">
+      <label>Fotografia do carro <span class="required">*</span></label>
+      <div class="photoActions">
+        <button type="button" class="photoChoice" onclick="vehiclePhotoCamera.click()"><span>📷</span><strong>Tirar fotografia</strong></button>
+        <button type="button" class="photoChoice" onclick="vehiclePhotoUpload.click()"><span>🖼️</span><strong>Carregar fotografia</strong></button>
+      </div>
+      <input id="vehiclePhotoCamera" class="hidden" type="file" accept="image/*" capture="environment">
+      <input id="vehiclePhotoUpload" class="hidden" type="file" accept="image/*">
+      <div id="vehiclePhotoPreview" class="preview"></div><div id="vehiclePhotoStatus" class="photoStatus"></div>
+      <label>VIN / Chassis</label><input id="vehicleVin">
+      <label>Notas</label><textarea id="vehicleNotes"></textarea>
+      <button class="btn primary" onclick="saveVehicle()">✓ Guardar viatura</button>
+      <button class="btn secondary" onclick="closeVehicleForm()">Cancelar</button>
+    </div>
+    <div id="vehicleList" class="list"></div>
+  </section>
+
+  <section id="interventionView" class="view">
+    <button class="back" onclick="showView('homeView')">← Voltar</button><h2>Nova intervenção</h2>
+    <div class="card"><h3>1. Viatura</h3><label>Matrícula</label><input id="intPlate" placeholder="00-AA-00" class="uppercase"><button class="btn secondary" onclick="findVehicleByPlate()">Pesquisar matrícula</button><div id="vehicleMatch"></div></div>
+    <div class="card"><h3>2. Entrada</h3><label>Data</label><input id="intDate" type="date"><label>Quilómetros</label><input id="intKm" type="number" inputmode="numeric">
+      <label>Fotografia do conta-quilómetros <span class="required">*</span></label>
+      <div class="photoActions"><button type="button" class="photoChoice" onclick="odoCamera.click()"><span>📷</span><strong>Tirar fotografia</strong></button><button type="button" class="photoChoice" onclick="odoUpload.click()"><span>🖼️</span><strong>Carregar fotografia</strong></button></div>
+      <input id="odoCamera" class="hidden" type="file" accept="image/*" capture="environment"><input id="odoUpload" class="hidden" type="file" accept="image/*"><div id="odoPreview" class="preview"></div>
+    </div>
+    <div class="card"><h3>3. Trabalho realizado</h3><label>Tipo de serviço</label><input id="serviceType" placeholder="Ex.: Revisão, travões, diagnóstico"><label>Descrição</label><textarea id="workDesc"></textarea>
+      <div class="sectionHead"><h3 class="partsTitle">Peças</h3><button class="btn secondary compact" onclick="addPart()">＋ Peça</button></div><div id="parts"></div>
+      <label>Fotografias do trabalho</label><div class="photoActions"><button type="button" class="photoChoice" onclick="workCamera.click()"><span>📷</span><strong>Tirar fotografia</strong></button><button type="button" class="photoChoice" onclick="workUpload.click()"><span>🖼️</span><strong>Carregar fotografias</strong></button></div>
+      <input id="workCamera" class="hidden" type="file" accept="image/*" capture="environment"><input id="workUpload" class="hidden" type="file" accept="image/*" multiple><div id="workPreview" class="preview"></div>
+      <label>Observações</label><textarea id="intNotes"></textarea><button class="btn primary" id="saveInterventionBtn" onclick="saveIntervention()">✓ Terminar e guardar</button><div id="intMsg"></div>
+    </div>
+  </section>
+
+  <section id="historyView" class="view"><button class="back" onclick="showView('homeView')">← Voltar</button><h2>Histórico</h2><input id="historySearch" placeholder="Pesquisar matrícula ou serviço" oninput="renderHistory()"><div id="historyList" class="list"></div></section>
 </main>
-<nav id="bottomNav" class="nav hidden"><button onclick="showView('homeView')"><span>⌂</span>Início</button><button onclick="showView('interventionView')"><span>＋</span>Intervenção</button><button onclick="showView('vehiclesView')"><span>🚗</span>Viaturas</button><button onclick="showView('clientsView')"><span>👤</span>Clientes</button></nav>
-<script>
-const SUPABASE_URL='https://tfqzzhpehrkkxmrpwkas.supabase.co';
-const SUPABASE_KEY='sb_publishable_UUrd8g8HyaqaUdegSZLbLg_1pY9y2Dy';
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let clients=[],vehicles=[],history=[],selectedVehicle=null;
-const $=id=>document.getElementById(id);
-function esc(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='clientsView')loadClients();if(id==='vehiclesView')loadVehicles();if(id==='historyView')loadHistory();if(id==='interventionView'){loadVehicles();$('intDate').value=new Date().toISOString().slice(0,10)}}
-async function init(){const {data:{session}}=await sb.auth.getSession();const recovery=location.hash.includes('type=recovery')||new URLSearchParams(location.search).get('recovery')==='1';if(recovery&&session){showResetView()}else{setSessionUI(session)}sb.auth.onAuthStateChange((event,s)=>{if(event==='PASSWORD_RECOVERY'){showResetView()}else if(event!=='INITIAL_SESSION'){setSessionUI(s)}});}
-function setSessionUI(session){const logged=!!session;$('authView').classList.toggle('active',!logged);if(logged){$('homeView').classList.add('active');$('logoutBtn').classList.remove('hidden');$('bottomNav').classList.remove('hidden');$('userLabel').textContent=session.user.email;loadDashboard()}else{$('logoutBtn').classList.add('hidden');$('bottomNav').classList.add('hidden');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('authView').classList.add('active');$('userLabel').textContent='Gestão simples de oficina'}}
-async function auth(mode){const email=$('email').value.trim(),password=$('password').value;const box=$('authMsg');box.innerHTML='';if(!email||password.length<6){box.innerHTML='<div class="error">Preencha um email válido e uma palavra-passe com pelo menos 6 caracteres.</div>';return}const appUrl=location.origin+location.pathname;let res=mode==='signup'?await sb.auth.signUp({email,password,options:{emailRedirectTo:appUrl}}):await sb.auth.signInWithPassword({email,password});if(res.error){box.innerHTML='<div class="error">'+esc(res.error.message)+'</div>'}else if(mode==='signup'&&!res.data.session){box.innerHTML='<div class="ok">Se este email ainda não estava registado, enviámos uma mensagem de confirmação. Se já tinha conta, use Entrar ou a recuperação de palavra-passe.</div>'}}
-async function forgotPassword(){const email=$('email').value.trim(),box=$('authMsg');box.innerHTML='';if(!email){box.innerHTML='<div class="error">Indique primeiro o seu email.</div>';return}const redirectTo=location.origin+location.pathname+'?recovery=1';const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});if(error){box.innerHTML='<div class="error">'+esc(error.message)+'</div>';return}box.innerHTML='<div class="ok">Se existir uma conta com este email, enviámos uma ligação para definir uma nova palavra-passe. Verifique também o Spam.</div>'}
-function showResetView(){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('resetView').classList.add('active');$('bottomNav').classList.add('hidden');$('logoutBtn').classList.add('hidden');$('userLabel').textContent='Recuperação de palavra-passe'}
-async function updatePassword(){const p1=$('newPassword').value,p2=$('confirmPassword').value,box=$('resetMsg');box.innerHTML='';if(p1.length<6){box.innerHTML='<div class="error">A palavra-passe deve ter pelo menos 6 caracteres.</div>';return}if(p1!==p2){box.innerHTML='<div class="error">As palavras-passe não coincidem.</div>';return}const {error}=await sb.auth.updateUser({password:p1});if(error){box.innerHTML='<div class="error">'+esc(error.message)+'</div>';return}box.innerHTML='<div class="ok">✓ Palavra-passe alterada com sucesso.</div>';history.replaceState({},document.title,location.pathname);setTimeout(async()=>{const {data:{session}}=await sb.auth.getSession();setSessionUI(session)},800)}
-$('loginBtn').onclick=()=>auth('login');$('signupBtn').onclick=()=>auth('signup');$('forgotBtn').onclick=forgotPassword;$('updatePasswordBtn').onclick=updatePassword;$('logoutBtn').onclick=()=>sb.auth.signOut();
-async function loadDashboard(){await Promise.all([loadClients(false),loadVehicles(false)]);$('countClients').textContent=clients.length;$('countVehicles').textContent=vehicles.length}
-async function loadClients(render=true){const {data,error}=await sb.from('oficina_clientes').select('*').order('nome');if(!error)clients=data||[];if(render)renderClients();fillClientSelect()}
-function renderClients(){const q=($('clientSearch')?.value||'').toLowerCase();const arr=clients.filter(c=>(c.nome+' '+(c.telefone||'')).toLowerCase().includes(q));$('clientList').innerHTML=arr.length?arr.map(c=>`<div class="row"><div><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||'Sem telefone')} · ${esc(c.email||'Sem email')}</small></div><div class="actions"><button onclick="editClient('${c.id}')">Editar</button></div></div>`).join(''):'<div class="empty">Ainda não existem clientes.</div>'}
-function openClientForm(c=null){$('clientFormCard').classList.remove('hidden');$('clientFormTitle').textContent=c?'Editar cliente':'Novo cliente';$('clientId').value=c?.id||'';$('clientName').value=c?.nome||'';$('clientPhone').value=c?.telefone||'';$('clientEmail').value=c?.email||'';$('clientNif').value=c?.nif||'';$('clientNotes').value=c?.notas||'';$('clientName').focus()}
-function closeClientForm(){$('clientFormCard').classList.add('hidden')}
-function editClient(id){openClientForm(clients.find(c=>c.id===id))}
-async function saveClient(){const nome=$('clientName').value.trim();if(!nome)return alert('Indique o nome do cliente.');const payload={nome,telefone:$('clientPhone').value.trim()||null,email:$('clientEmail').value.trim()||null,nif:$('clientNif').value.trim()||null,notas:$('clientNotes').value.trim()||null,atualizado_em:new Date().toISOString()};const id=$('clientId').value;const res=id?await sb.from('oficina_clientes').update(payload).eq('id',id):await sb.from('oficina_clientes').insert(payload);if(res.error)return alert(res.error.message);closeClientForm();await loadClients();await loadDashboard()}
-function fillClientSelect(){if(!$('vehicleClient'))return;$('vehicleClient').innerHTML='<option value="">Sem cliente associado</option>'+clients.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}
-async function loadVehicles(render=true){const {data,error}=await sb.from('oficina_viaturas').select('*, oficina_clientes(nome)').order('matricula');if(!error)vehicles=data||[];if(render)renderVehicles();}
-function renderVehicles(){const q=($('vehicleSearch')?.value||'').toLowerCase();const arr=vehicles.filter(v=>(v.matricula+' '+(v.marca||'')+' '+(v.modelo||'')+' '+(v.oficina_clientes?.nome||'')).toLowerCase().includes(q));$('vehicleList').innerHTML=arr.length?arr.map(v=>`<div class="row"><div><strong>${esc(v.matricula)}</strong><small>${esc([v.marca,v.modelo].filter(Boolean).join(' ')||'Sem marca/modelo')} · ${esc(v.oficina_clientes?.nome||'Sem cliente')}</small></div><div class="actions"><button onclick="editVehicle('${v.id}')">Editar</button></div></div>`).join(''):'<div class="empty">Ainda não existem viaturas.</div>'}
-function openVehicleForm(v=null){loadClients(false).then(()=>{fillClientSelect();$('vehicleFormCard').classList.remove('hidden');$('vehicleFormTitle').textContent=v?'Editar viatura':'Nova viatura';$('vehicleId').value=v?.id||'';$('vehiclePlate').value=v?.matricula||'';$('vehicleClient').value=v?.cliente_id||'';$('vehicleBrand').value=v?.marca||'';$('vehicleModel').value=v?.modelo||'';$('vehicleYear').value=v?.ano||'';$('vehicleKm').value=v?.quilometragem_atual||'';$('vehicleVin').value=v?.vin||'';$('vehicleNotes').value=v?.notas||'';$('vehiclePlate').focus()})}
-function closeVehicleForm(){$('vehicleFormCard').classList.add('hidden')}
-function editVehicle(id){openVehicleForm(vehicles.find(v=>v.id===id))}
-async function saveVehicle(){const matricula=$('vehiclePlate').value.trim().toUpperCase();if(!matricula)return alert('Indique a matrícula.');const payload={matricula,cliente_id:$('vehicleClient').value||null,marca:$('vehicleBrand').value.trim()||null,modelo:$('vehicleModel').value.trim()||null,ano:+$('vehicleYear').value||null,quilometragem_atual:+$('vehicleKm').value||null,vin:$('vehicleVin').value.trim()||null,notas:$('vehicleNotes').value.trim()||null,atualizado_em:new Date().toISOString()};const id=$('vehicleId').value;const res=id?await sb.from('oficina_viaturas').update(payload).eq('id',id):await sb.from('oficina_viaturas').insert(payload);if(res.error)return alert(res.error.message);closeVehicleForm();await loadVehicles();await loadDashboard()}
-async function findVehicleByPlate(){const p=$('intPlate').value.trim().toUpperCase();if(!p)return;await loadVehicles(false);selectedVehicle=vehicles.find(v=>v.matricula.toUpperCase()===p)||null;if(!selectedVehicle){$('vehicleMatch').innerHTML='<div class="error">Matrícula não encontrada. Crie primeiro a viatura.</div>';return}$('vehicleMatch').innerHTML=`<div class="ok"><strong>${esc(selectedVehicle.matricula)}</strong> — ${esc([selectedVehicle.marca,selectedVehicle.modelo].filter(Boolean).join(' ')||'Viatura encontrada')}</div>`;$('intKm').value=selectedVehicle.quilometragem_atual||''}
-function addPart(data={}){const div=document.createElement('div');div.className='part';div.innerHTML=`<label>Nome da peça</label><input class="partName" placeholder="Ex.: Filtro de óleo" value="${esc(data.nome||'')}"><div class="grid2"><div><label>Referência</label><input class="partRef" value="${esc(data.referencia||'')}"></div><div><label>Quantidade</label><input class="partQty" type="number" step="0.01" value="${data.quantidade||1}"></div></div><button class="btn danger" onclick="this.parentElement.remove()">Remover peça</button>`;$('parts').appendChild(div)}
-function previewInput(input,container){const files=[...input.files];$(container).innerHTML=files.map(f=>`<img src="${URL.createObjectURL(f)}" alt="Pré-visualização">`).join('')}
-$('odoPhoto').onchange=e=>previewInput(e.target,'odoPreview');$('workPhotos').onchange=e=>previewInput(e.target,'workPreview');
-async function uploadPhoto(file,interventionId,type,partId=null){const {data:{user}}=await sb.auth.getUser();const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`${user.id}/${interventionId}/${crypto.randomUUID()}.${ext}`;const {error}=await sb.storage.from('oficina-fotos').upload(path,file,{contentType:file.type||'image/jpeg'});if(error)throw error;const {error:dbErr}=await sb.from('oficina_fotografias').insert({intervencao_id:interventionId,peca_id:partId,tipo:type,caminho_storage:path});if(dbErr)throw dbErr}
-async function saveIntervention(){const btn=$('saveInterventionBtn'),msg=$('intMsg');msg.innerHTML='';if(!selectedVehicle||selectedVehicle.matricula!==$('intPlate').value.trim().toUpperCase()){await findVehicleByPlate();if(!selectedVehicle)return}const km=+$('intKm').value;const tipo=$('serviceType').value.trim();if(!km||!tipo){msg.innerHTML='<div class="error">Preencha os quilómetros e o tipo de serviço.</div>';return}if(!$('odoPhoto').files[0]){msg.innerHTML='<div class="error">Tire a fotografia do conta-quilómetros antes de guardar.</div>';return}btn.textContent='A guardar…';btn.disabled=true;try{const {data:interv,error}=await sb.from('oficina_intervencoes').insert({viatura_id:selectedVehicle.id,data:$('intDate').value||new Date().toISOString().slice(0,10),quilometragem:km,tipo_servico:tipo,descricao:$('workDesc').value.trim()||null,notas:$('intNotes').value.trim()||null}).select().single();if(error)throw error;const partNodes=[...document.querySelectorAll('.part')];for(const n of partNodes){const nome=n.querySelector('.partName').value.trim();if(!nome)continue;const {error:pe}=await sb.from('oficina_pecas').insert({intervencao_id:interv.id,nome,referencia:n.querySelector('.partRef').value.trim()||null,quantidade:+n.querySelector('.partQty').value||1});if(pe)throw pe}await uploadPhoto($('odoPhoto').files[0],interv.id,'conta_quilometros');for(const f of [...$('workPhotos').files])await uploadPhoto(f,interv.id,'trabalho');await sb.from('oficina_viaturas').update({quilometragem_atual:km,atualizado_em:new Date().toISOString()}).eq('id',selectedVehicle.id);msg.innerHTML='<div class="ok">✓ Intervenção guardada com sucesso.</div>';resetIntervention();await loadDashboard()}catch(e){msg.innerHTML='<div class="error">Não foi possível guardar: '+esc(e.message||e)+'</div>'}finally{btn.textContent='✓ Terminar e guardar';btn.disabled=false}}
-function resetIntervention(){selectedVehicle=null;['intPlate','intKm','serviceType','workDesc','intNotes'].forEach(id=>$(id).value='');$('parts').innerHTML='';$('vehicleMatch').innerHTML='';$('odoPhoto').value='';$('workPhotos').value='';$('odoPreview').innerHTML='';$('workPreview').innerHTML='';$('intDate').value=new Date().toISOString().slice(0,10)}
-async function loadHistory(){const {data,error}=await sb.from('oficina_intervencoes').select('*, oficina_viaturas(matricula,marca,modelo,oficina_clientes(nome)), oficina_pecas(nome,referencia,quantidade), oficina_fotografias(id,tipo,caminho_storage)').order('data',{ascending:false}).order('criado_em',{ascending:false});if(!error)history=data||[];renderHistory()}
-function renderHistory(){const q=($('historySearch')?.value||'').toLowerCase();const arr=history.filter(h=>((h.oficina_viaturas?.matricula||'')+' '+h.tipo_servico+' '+(h.descricao||'')).toLowerCase().includes(q));$('historyList').innerHTML=arr.length?arr.map(h=>`<div class="card"><div class="sectionHead"><div><span class="pill">${esc(h.data)}</span><h3 style="margin-top:8px">${esc(h.oficina_viaturas?.matricula||'')}</h3></div><strong>${Number(h.quilometragem).toLocaleString('pt-PT')} km</strong></div><strong>${esc(h.tipo_servico)}</strong><p class="muted">${esc(h.descricao||'Sem descrição')}</p>${h.oficina_pecas?.length?`<p><strong>Peças:</strong> ${h.oficina_pecas.map(p=>esc(p.nome)).join(', ')}</p>`:''}<small class="muted">${esc(h.oficina_viaturas?.oficina_clientes?.nome||'Sem cliente')}</small></div>`).join(''):'<div class="empty">Ainda não existem intervenções.</div>'}
-init();
-</script>
-</body></html>
+
+<nav id="bottomNav" class="nav hidden">
+  <button onclick="showView('homeView')"><span>⌂</span>Início</button><button onclick="showView('interventionView')"><span>＋</span>Intervenção</button><button onclick="showView('vehiclesView')"><span>🚗</span>Viaturas</button><button onclick="showView('clientsView')"><span>👤</span>Clientes</button>
+</nav>
+<script src="app.js?v=4"></script>
+</body>
+</html>
