@@ -1,223 +1,86 @@
 (() => {
   const normClient = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
   const plateKeyClient = s => String(s ?? '').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  let activeClientId = null;
 
   const style = document.createElement('style');
   style.textContent = `
     #vehicleClient{display:none}
-    .vehicleClientPicker{margin-top:4px}
-    .vehicleClientResults{display:grid;gap:7px;margin-top:8px}
-    .vehicleClientPick{width:100%;text-align:left;border:1px solid #d0d5dd;border-radius:12px;background:#fff;padding:11px 12px;cursor:pointer}
-    .vehicleClientPick strong{display:block;font-size:16px}
-    .vehicleClientPick small{display:block;color:#667085;margin-top:3px;line-height:1.35}
-    .vehicleSelectedClient{border:2px solid #84adff;background:#f5f8ff;border-radius:13px;padding:11px 12px;margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .vehicleSelectedClient strong{display:block}
-    .vehicleSelectedClient small{display:block;color:#667085;margin-top:3px;line-height:1.35}
-    .vehicleSelectedClient button{border:0;background:#eef4ff;color:#1849a9;border-radius:9px;padding:8px 10px;font-weight:800;white-space:nowrap}
-    .associateVehicleBox{margin-top:14px;padding:13px;border:1px solid #d0d5dd;border-radius:14px;background:#f9fafb}
-    .associateVehicleBox>strong{display:block;margin-bottom:5px}
-    .associateVehicleHint{font-size:14px;color:#667085;margin:0 0 9px;line-height:1.4}
-    .associateVehicleActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-    .associateVehicleActions .btn{min-height:50px;font-size:15px;padding:9px}
+    .vehicleClientPicker{margin-top:4px}.vehicleClientResults{display:grid;gap:7px;margin-top:8px}
+    .vehicleClientPick{width:100%;text-align:left;border:1px solid #d0d5dd;border-radius:12px;background:#fff;padding:11px 12px;cursor:pointer}.vehicleClientPick strong{display:block;font-size:16px}.vehicleClientPick small{display:block;color:#667085;margin-top:3px;line-height:1.35}
+    .vehicleSelectedClient{border:2px solid #84adff;background:#f5f8ff;border-radius:13px;padding:11px 12px;margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:10px}.vehicleSelectedClient strong{display:block}.vehicleSelectedClient small{display:block;color:#667085;margin-top:3px;line-height:1.35}.vehicleSelectedClient button{border:0;background:#eef4ff;color:#1849a9;border-radius:9px;padding:8px 10px;font-weight:800;white-space:nowrap}
+    .associateVehicleBox{margin-top:14px;padding:13px;border:1px solid #d0d5dd;border-radius:14px;background:#f9fafb}.associateVehicleBox>strong{display:block;margin-bottom:5px}.associateVehicleHint{font-size:14px;color:#667085;margin:0 0 9px;line-height:1.4}.associateVehicleActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.associateVehicleActions .btn{min-height:50px;font-size:15px;padding:9px}
     .clientIdentity{font-size:14px;color:#667085;line-height:1.45;margin-top:4px}
-    @media(max-width:480px){.associateVehicleActions{grid-template-columns:1fr}.vehicleSelectedClient{align-items:flex-start}}
+    .entityRow{width:100%;border:1px solid #e4e7ec;border-radius:16px;background:#fff;padding:14px;margin:10px 0;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(16,24,40,.03)}.entityRow:hover{border-color:#b2ccff}.entityRowMain{flex:1;min-width:0}.entityRowMain strong{display:block;font-size:19px}.entityRowMain small{display:block;color:#667085;margin-top:4px;line-height:1.35}.chevron{font-size:25px;color:#98a2b3;font-weight:900}
+    .detailHero{background:#fff;border:1px solid #e4e7ec;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(16,24,40,.04)}.detailTitle{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.detailTitle h2{margin:0}.detailMeta{display:grid;gap:0;margin-top:12px;border-top:1px solid #eaecf0}.detailMetaRow{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #f2f4f7}.detailMetaRow span:first-child{color:#667085;font-weight:700}.detailMetaRow span:last-child{font-weight:700;word-break:break-word}
+    .vehicleHeroPhoto{width:100%;max-height:300px;object-fit:cover;border-radius:16px;border:1px solid #e4e7ec;background:#f2f4f7;margin:10px 0 14px}.vehicleHeroPlaceholder{height:180px;border-radius:16px;background:#f2f4f7;display:grid;place-items:center;font-size:60px;margin:10px 0 14px}
+    .sectionTitleRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 8px}.sectionTitleRow h3{margin:0}.maintenanceCard{background:#fff;border:1px solid #e4e7ec;border-radius:15px;padding:14px;margin:10px 0}.maintenanceTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.maintenanceTop strong{font-size:17px}.maintenanceKm{font-weight:900;white-space:nowrap}.maintenanceCard p{margin:8px 0}.maintenanceParts{font-size:14px;color:#475467;margin-top:8px}.detailActions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.detailActions .btn{min-height:52px;font-size:16px}
+    .vehicleMiniCard{display:flex;align-items:center;gap:11px;border:1px solid #e4e7ec;border-radius:14px;padding:10px;margin:8px 0;cursor:pointer;background:#fff}.vehicleMiniCard img,.vehicleMiniPhoto{width:82px;height:62px;object-fit:cover;border-radius:10px;background:#f2f4f7;flex:0 0 auto}.vehicleMiniInfo{flex:1;min-width:0}.vehicleMiniInfo strong{display:block;font-size:18px}.vehicleMiniInfo small{display:block;color:#667085;margin-top:4px}.linkedClientCard{border:1px solid #d0d5dd;background:#f9fafb;border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}.linkedClientCard strong{display:block}.linkedClientCard small{display:block;color:#667085;margin-top:3px}.hintLine{font-size:14px;color:#667085;margin-top:6px}.emptySmall{padding:16px 0;color:#667085;text-align:center}
+    @media(max-width:480px){.associateVehicleActions,.detailActions{grid-template-columns:1fr}.vehicleSelectedClient{align-items:flex-start}.detailMetaRow{grid-template-columns:95px 1fr}.entityRow{padding:12px}}
   `;
   document.head.appendChild(style);
 
-  function clientIdentityEnhanced(c){
-    return [c.email,c.telefone,c.nif ? `NIF ${c.nif}` : null].filter(Boolean).join(' · ') || 'Sem contactos adicionais';
+  function clientIdentityEnhanced(c){return [c.email,c.telefone,c.nif?`NIF ${c.nif}`:null].filter(Boolean).join(' · ')||'Sem contactos adicionais';}
+
+  function ensureDetailViews(){
+    if($('clientDetailView')) return;
+    const main=document.querySelector('main.shell');
+    const client=document.createElement('section');client.id='clientDetailView';client.className='view';client.innerHTML='<button class="back" onclick="showView(\'clientsView\')">← Clientes</button><div id="clientDetailContent"></div>';
+    const vehicle=document.createElement('section');vehicle.id='vehicleDetailView';vehicle.className='view';vehicle.innerHTML='<button class="back" id="vehicleDetailBack">← Viaturas</button><div id="vehicleDetailContent"></div>';
+    main.appendChild(client);main.appendChild(vehicle);
+  }
+
+  function ensureDropdownSuggestions(){
+    const brands=['Abarth','Alfa Romeo','Audi','BMW','BYD','Citroën','Cupra','Dacia','DS','Fiat','Ford','Honda','Hyundai','Jaguar','Jeep','Kia','Land Rover','Lexus','Mazda','Mercedes-Benz','MG','MINI','Mitsubishi','Nissan','Opel','Peugeot','Polestar','Porsche','Renault','SEAT','Škoda','Smart','Subaru','Suzuki','Tesla','Toyota','Volkswagen','Volvo'];
+    const colors=['Branco','Preto','Cinzento','Prateado','Azul','Vermelho','Verde','Castanho','Bege','Amarelo','Laranja','Roxo','Bordeaux','Dourado'];
+    if(!$('vehicleBrandOptions')){const d=document.createElement('datalist');d.id='vehicleBrandOptions';d.innerHTML=brands.map(x=>`<option value="${x}"></option>`).join('');document.body.appendChild(d)}
+    if(!$('vehicleColorOptions')){const d=document.createElement('datalist');d.id='vehicleColorOptions';d.innerHTML=colors.map(x=>`<option value="${x}"></option>`).join('');document.body.appendChild(d)}
+    if($('vehicleBrand')){$('vehicleBrand').setAttribute('list','vehicleBrandOptions');$('vehicleBrand').placeholder='Escolher ou escrever marca'}
+    if($('vehicleColor')){$('vehicleColor').setAttribute('list','vehicleColorOptions');$('vehicleColor').placeholder='Escolher ou escrever cor'}
   }
 
   function ensureClientPicker(){
-    const select = $('vehicleClient');
-    if(!select || $('vehicleClientSearchEnhanced')) return;
-
-    const label = select.previousElementSibling;
-    if(label && label.tagName==='LABEL') label.innerHTML='Associar a cliente <span class="required">*</span>';
-
-    const wrap = document.createElement('div');
-    wrap.className = 'vehicleClientPicker';
-    wrap.innerHTML = `
-      <input id="vehicleClientSearchEnhanced" placeholder="Pesquisar por nome, email, telemóvel ou NIF" autocomplete="off">
-      <div id="vehicleSelectedClientEnhanced"></div>
-      <div id="vehicleClientResultsEnhanced" class="vehicleClientResults"></div>
-    `;
-    select.insertAdjacentElement('afterend', wrap);
-
-    $('vehicleClientSearchEnhanced').addEventListener('input', renderVehicleClientResultsEnhanced);
+    const select=$('vehicleClient');if(!select||$('vehicleClientSearchEnhanced'))return;
+    const label=select.previousElementSibling;if(label&&label.tagName==='LABEL')label.innerHTML='Associar a cliente <span class="required">*</span>';
+    const wrap=document.createElement('div');wrap.className='vehicleClientPicker';wrap.innerHTML='<input id="vehicleClientSearchEnhanced" placeholder="Pesquisar por nome, email, telemóvel ou NIF" autocomplete="off"><div id="vehicleSelectedClientEnhanced"></div><div id="vehicleClientResultsEnhanced" class="vehicleClientResults"></div>';select.insertAdjacentElement('afterend',wrap);$('vehicleClientSearchEnhanced').addEventListener('input',renderVehicleClientResultsEnhanced);
   }
 
-  function renderVehicleSelectedClientEnhanced(){
-    ensureClientPicker();
-    const select = $('vehicleClient');
-    const box = $('vehicleSelectedClientEnhanced');
-    if(!select || !box) return;
+  function renderVehicleSelectedClientEnhanced(){ensureClientPicker();const select=$('vehicleClient'),box=$('vehicleSelectedClientEnhanced');if(!select||!box)return;const c=clients.find(x=>x.id===select.value);if(!c){box.innerHTML='';return}box.innerHTML=`<div class="vehicleSelectedClient"><div><strong>✓ ${esc(c.nome)}</strong><small>${esc(clientIdentityEnhanced(c))}</small></div><button type="button" onclick="clearVehicleClientEnhanced()">Alterar</button></div>`}
+  window.clearVehicleClientEnhanced=function(){ensureClientPicker();$('vehicleClient').value='';$('vehicleClientSearchEnhanced').value='';$('vehicleClientResultsEnhanced').innerHTML='';renderVehicleSelectedClientEnhanced();$('vehicleClientSearchEnhanced').focus()};
+  window.chooseVehicleClientEnhanced=function(id){ensureClientPicker();const c=clients.find(x=>x.id===id);if(!c)return;$('vehicleClient').value=id;$('vehicleClientSearchEnhanced').value=c.nome;$('vehicleClientResultsEnhanced').innerHTML='';renderVehicleSelectedClientEnhanced()};
+  window.renderVehicleClientResultsEnhanced=function(){ensureClientPicker();const q=normClient($('vehicleClientSearchEnhanced').value),box=$('vehicleClientResultsEnhanced');if(!q){box.innerHTML='';return}const found=clients.filter(c=>normClient(`${c.nome} ${c.email||''} ${c.telefone||''} ${c.nif||''}`).includes(q)).slice(0,8);box.innerHTML=found.length?found.map(c=>`<button type="button" class="vehicleClientPick" onclick="chooseVehicleClientEnhanced('${c.id}')"><strong>${esc(c.nome)}</strong><small>${esc(clientIdentityEnhanced(c))}</small></button>`).join(''):'<div class="error">Nenhum cliente encontrado.</div>'};
 
-    const c = clients.find(x => x.id === select.value);
-    if(!c){
-      box.innerHTML = '';
-      return;
-    }
-    box.innerHTML = `<div class="vehicleSelectedClient">
-      <div><strong>✓ ${esc(c.nome)}</strong><small>${esc(clientIdentityEnhanced(c))}</small></div>
-      <button type="button" onclick="clearVehicleClientEnhanced()">Alterar</button>
-    </div>`;
-  }
+  const originalOpenVehicleForm=window.openVehicleForm;
+  window.openVehicleForm=async function(v=null,presetClientId=null,presetPlate=''){await originalOpenVehicleForm(v,presetClientId);ensureClientPicker();ensureDropdownSuggestions();const selected=clients.find(c=>c.id===$('vehicleClient').value);$('vehicleClientSearchEnhanced').value=selected?.nome||'';$('vehicleClientResultsEnhanced').innerHTML='';renderVehicleSelectedClientEnhanced();if(!v&&presetPlate)$('vehiclePlate').value=presetPlate.toUpperCase()};
 
-  window.clearVehicleClientEnhanced = function(){
-    ensureClientPicker();
-    $('vehicleClient').value = '';
-    $('vehicleClientSearchEnhanced').value = '';
-    $('vehicleClientResultsEnhanced').innerHTML = '';
-    renderVehicleSelectedClientEnhanced();
-    $('vehicleClientSearchEnhanced').focus();
+  window.renderClients=function(){
+    const q=normClient($('clientSearch').value);const arr=clients.filter(c=>{const cv=vehicles.filter(v=>v.cliente_id===c.id);return normClient([c.nome,c.telefone,c.email,c.nif,...cv.flatMap(v=>[v.matricula,v.marca,v.modelo,v.cor])].join(' ')).includes(q)});
+    $('clientList').innerHTML=arr.length?arr.map(c=>{const cv=vehicles.filter(v=>v.cliente_id===c.id);return `<button type="button" class="entityRow" onclick="openClientDetailEnhanced('${c.id}')"><div class="entityRowMain"><strong>${esc(c.nome)}</strong><small>${esc(clientIdentityEnhanced(c))}</small><small>${cv.length} viatura${cv.length===1?'':'s'}${cv.length?' · '+cv.map(v=>esc(v.matricula)).join(', '):''}</small></div><span class="chevron">›</span></button>`}).join(''):'<div class="empty">Ainda não existem clientes.</div>';
   };
 
-  window.chooseVehicleClientEnhanced = function(id){
-    ensureClientPicker();
-    const c = clients.find(x => x.id === id);
-    if(!c) return;
-    $('vehicleClient').value = id;
-    $('vehicleClientSearchEnhanced').value = c.nome;
-    $('vehicleClientResultsEnhanced').innerHTML = '';
-    renderVehicleSelectedClientEnhanced();
+  window.renderVehicles=function(){
+    const q=normClient($('vehicleSearch').value);const arr=vehicles.filter(v=>normClient(`${v.matricula} ${v.marca||''} ${v.modelo||''} ${v.cor||''} ${v.oficina_clientes?.nome||''}`).includes(q));
+    $('vehicleList').innerHTML=arr.length?arr.map(v=>`<button type="button" class="entityRow" onclick="openVehicleDetailEnhanced('${v.id}')">${v._fotoUrl?`<img class="vehicleThumb" src="${esc(v._fotoUrl)}" alt="${esc(v.matricula)}">`:'<div class="vehicleThumb carPlaceholder">🚗</div>'}<div class="entityRowMain"><strong>${esc(v.matricula)}</strong><small>${esc(v.marca||'')} ${esc(v.modelo||'')}${v.cor?' · '+esc(v.cor):''}</small><small>${esc(v.oficina_clientes?.nome||'Sem cliente')}</small></div><span class="chevron">›</span></button>`).join(''):'<div class="empty">Ainda não existem viaturas.</div>';
   };
 
-  window.renderVehicleClientResultsEnhanced = function(){
-    ensureClientPicker();
-    const q = normClient($('vehicleClientSearchEnhanced').value);
-    const box = $('vehicleClientResultsEnhanced');
-    if(!q){
-      box.innerHTML = '';
-      return;
-    }
-
-    const found = clients
-      .filter(c => normClient(`${c.nome} ${c.email||''} ${c.telefone||''} ${c.nif||''}`).includes(q))
-      .slice(0,8);
-
-    box.innerHTML = found.length
-      ? found.map(c => `<button type="button" class="vehicleClientPick" onclick="chooseVehicleClientEnhanced('${c.id}')">
-          <strong>${esc(c.nome)}</strong>
-          <small>${esc(clientIdentityEnhanced(c))}</small>
-        </button>`).join('')
-      : '<div class="error">Nenhum cliente encontrado.</div>';
+  window.openClientDetailEnhanced=async function(clientId){
+    activeClientId=clientId;ensureDetailViews();await Promise.all([loadClients(false),loadVehicles(false)]);const c=clients.find(x=>x.id===clientId);if(!c)return;const cv=vehicles.filter(v=>v.cliente_id===clientId);showView('clientDetailView');
+    $('clientDetailContent').innerHTML=`<div class="detailHero"><div class="detailTitle"><div><h2>${esc(c.nome)}</h2><div class="hintLine">Ficha do cliente</div></div><button class="mini" onclick="editClientFromDetailEnhanced('${c.id}')">Editar</button></div><div class="detailMeta"><div class="detailMetaRow"><span>Telemóvel</span><span>${esc(c.telefone||'—')}</span></div><div class="detailMetaRow"><span>Email</span><span>${esc(c.email||'—')}</span></div><div class="detailMetaRow"><span>NIF</span><span>${esc(c.nif||'—')}</span></div><div class="detailMetaRow"><span>Notas</span><span>${esc(c.notas||'—')}</span></div></div></div><div class="sectionTitleRow"><h3>Viaturas (${cv.length})</h3><button class="btn primary compact" onclick="newVehicleForClient('${c.id}')">＋ Nova viatura</button></div>${cv.length?cv.map(v=>`<div class="vehicleMiniCard" onclick="openVehicleDetailEnhanced('${v.id}','client')">${v._fotoUrl?`<img src="${esc(v._fotoUrl)}" alt="${esc(v.matricula)}">`:'<div class="vehicleMiniPhoto carPlaceholder">🚗</div>'}<div class="vehicleMiniInfo"><strong>${esc(v.matricula)}</strong><small>${esc(v.marca||'')} ${esc(v.modelo||'')}${v.cor?' · '+esc(v.cor):''}</small></div><span class="chevron">›</span></div>`).join(''):'<div class="emptySmall">Este cliente ainda não tem viaturas.</div>'}<div class="associateVehicleBox"><strong>Associar viatura já existente</strong><p class="associateVehicleHint">Procure pela matrícula e associe-a a este cliente.</p><input id="clientDetailAssociatePlate" class="uppercase" placeholder="00-AA-00"><button class="btn secondary" style="margin-top:8px" onclick="associateVehicleByPlateEnhanced('${c.id}','clientDetailAssociatePlate','clientDetailAssociateMsg')">Associar matrícula</button><div id="clientDetailAssociateMsg"></div></div>`;
   };
+  window.editClientFromDetailEnhanced=function(id){showView('clientsView');setTimeout(()=>editClient(id),80)};
 
-  const originalOpenVehicleForm = window.openVehicleForm;
-  window.openVehicleForm = async function(v=null,presetClientId=null,presetPlate=''){
-    await originalOpenVehicleForm(v,presetClientId);
-    ensureClientPicker();
-
-    const selected = clients.find(c => c.id === $('vehicleClient').value);
-    $('vehicleClientSearchEnhanced').value = selected?.nome || '';
-    $('vehicleClientResultsEnhanced').innerHTML = '';
-    renderVehicleSelectedClientEnhanced();
-
-    if(!v && presetPlate) $('vehiclePlate').value = presetPlate.toUpperCase();
+  window.openVehicleDetailEnhanced=async function(vehicleId,origin='vehicles'){
+    ensureDetailViews();await Promise.all([loadClients(false),loadVehicles(false)]);const v=vehicles.find(x=>x.id===vehicleId);if(!v)return;const c=clients.find(x=>x.id===v.cliente_id);showView('vehicleDetailView');const back=$('vehicleDetailBack');back.textContent=origin==='client'?'← Cliente':'← Viaturas';back.onclick=()=>origin==='client'&&activeClientId?openClientDetailEnhanced(activeClientId):showView('vehiclesView');
+    $('vehicleDetailContent').innerHTML=`<div class="detailHero">${v._fotoUrl?`<img class="vehicleHeroPhoto" src="${esc(v._fotoUrl)}" alt="${esc(v.matricula)}">`:'<div class="vehicleHeroPlaceholder">🚗</div>'}<div class="detailTitle"><div><h2>${esc(v.matricula)}</h2><div class="hintLine">${esc(v.marca||'')} ${esc(v.modelo||'')}${v.cor?' · '+esc(v.cor):''}</div></div></div><div class="detailMeta"><div class="detailMetaRow"><span>Marca</span><span>${esc(v.marca||'—')}</span></div><div class="detailMetaRow"><span>Modelo</span><span>${esc(v.modelo||'—')}</span></div><div class="detailMetaRow"><span>Cor</span><span>${esc(v.cor||'—')}</span></div><div class="detailMetaRow"><span>Ano</span><span>${esc(v.ano||'—')}</span></div><div class="detailMetaRow"><span>Quilómetros</span><span>${v.quilometragem_atual?Number(v.quilometragem_atual).toLocaleString('pt-PT')+' km':'—'}</span></div><div class="detailMetaRow"><span>VIN</span><span>${esc(v.vin||'—')}</span></div><div class="detailMetaRow"><span>Notas</span><span>${esc(v.notas||'—')}</span></div></div><div class="detailActions"><button class="btn secondary" onclick="editVehicleFromDetailEnhanced('${v.id}')">Editar viatura</button><button class="btn primary" onclick="newInterventionForVehicleEnhanced('${v.matricula}')">＋ Nova intervenção</button></div></div>${c?`<div class="sectionTitleRow"><h3>Cliente</h3></div><div class="linkedClientCard" onclick="openClientDetailEnhanced('${c.id}')"><div><strong>${esc(c.nome)}</strong><small>${esc(clientIdentityEnhanced(c))}</small></div><span class="chevron">›</span></div>`:''}<div class="sectionTitleRow"><h3>Histórico de manutenções</h3></div><div id="vehicleMaintenanceHistory"><div class="emptySmall">A carregar histórico…</div></div>`;
+    await renderVehicleMaintenanceHistoryEnhanced(v.id);
   };
+  window.editVehicleFromDetailEnhanced=function(id){showView('vehiclesView');setTimeout(()=>editVehicle(id),80)};
+  window.newInterventionForVehicleEnhanced=function(plate){showView('interventionView');setTimeout(()=>{$('intPlate').value=plate;findVehicleByPlate()},80)};
+  window.renderVehicleMaintenanceHistoryEnhanced=async function(vehicleId){const box=$('vehicleMaintenanceHistory');if(!box)return;const {data,error}=await sb.from('oficina_intervencoes').select('*, oficina_pecas(nome,referencia,quantidade)').eq('viatura_id',vehicleId).order('data',{ascending:false}).order('criado_em',{ascending:false});if(error){box.innerHTML=`<div class="error">${esc(error.message)}</div>`;return}const rows=data||[];box.innerHTML=rows.length?rows.map(h=>`<div class="maintenanceCard"><div class="maintenanceTop"><div><span class="pill">${esc(h.data)}</span><div style="margin-top:8px"><strong>${esc(h.tipo_servico)}</strong></div></div><div class="maintenanceKm">${Number(h.quilometragem).toLocaleString('pt-PT')} km</div></div>${h.descricao?`<p>${esc(h.descricao)}</p>`:''}${h.oficina_pecas?.length?`<div class="maintenanceParts"><strong>Peças:</strong> ${h.oficina_pecas.map(p=>`${esc(p.nome)}${Number(p.quantidade)!==1?' × '+esc(p.quantidade):''}`).join(', ')}</div>`:''}${h.notas?`<div class="maintenanceParts"><strong>Observações:</strong> ${esc(h.notas)}</div>`:''}</div>`).join(''):'<div class="emptySmall">Ainda não existem intervenções nesta viatura.</div>'};
 
-  window.renderClients = function(){
-    const q = normClient($('clientSearch').value);
+  window.associateVehicleByPlateEnhanced=async function(clientId,inputId,msgId){const box=$(msgId);box.innerHTML='';const raw=$(inputId).value.trim();if(!raw){box.innerHTML='<div class="error">Introduza a matrícula.</div>';return}await loadVehicles(false);const vehicle=vehicles.find(v=>plateKeyClient(v.matricula)===plateKeyClient(raw));if(!vehicle){box.innerHTML='<div class="error">Esta matrícula ainda não está registada. Crie primeiro a viatura.</div>';return}if(vehicle.cliente_id===clientId){box.innerHTML='<div class="ok">✓ Esta viatura já está associada a este cliente.</div>';return}const target=clients.find(c=>c.id===clientId);if(vehicle.cliente_id){const current=clients.find(c=>c.id===vehicle.cliente_id);const ok=confirm(`A matrícula ${vehicle.matricula} está associada a ${current?.nome||'outro cliente'}. Pretende transferi-la para ${target?.nome||'este cliente'}?`);if(!ok)return}const {error}=await sb.from('oficina_viaturas').update({cliente_id:clientId,atualizado_em:new Date().toISOString()}).eq('id',vehicle.id);if(error){box.innerHTML=`<div class="error">${esc(error.message)}</div>`;return}await loadVehicles(false);if($('clientDetailView')?.classList.contains('active'))openClientDetailEnhanced(clientId);else renderClients();await loadDashboard()};
+  window.newVehicleForClientEnhanced=function(clientId,inputId){const plate=$(inputId)?.value.trim().toUpperCase()||'';showView('vehiclesView');setTimeout(()=>window.openVehicleForm(null,clientId,plate),80)};
 
-    const arr = clients.filter(c => {
-      const cv = vehicles.filter(v => v.cliente_id === c.id);
-      const hay = [
-        c.nome,c.telefone,c.email,c.nif,
-        ...cv.flatMap(v => [v.matricula,v.marca,v.modelo,v.cor])
-      ].join(' ');
-      return normClient(hay).includes(q);
-    });
-
-    $('clientList').innerHTML = arr.length ? arr.map(c => {
-      const cv = vehicles.filter(v => v.cliente_id === c.id);
-      const plateInput = `associatePlate_${c.id}`;
-      const msgId = `associateMsg_${c.id}`;
-
-      return `<div class="clientCard">
-        <div class="clientTop">
-          <div>
-            <strong style="font-size:20px">${esc(c.nome)}</strong>
-            <div class="clientIdentity">${esc(clientIdentityEnhanced(c))}</div>
-          </div>
-          <button class="mini" onclick="editClient('${c.id}')">Editar</button>
-        </div>
-
-        <div class="clientVehicles">
-          <strong>Viaturas (${cv.length})</strong>
-          ${cv.length ? cv.map(v => `<div class="clientVehicle">
-            ${v._fotoUrl ? `<img src="${esc(v._fotoUrl)}" alt="${esc(v.matricula)}">` : '<div class="carPlaceholder">🚗</div>'}
-            <div class="meta">
-              <div class="plate">${esc(v.matricula)}</div>
-              <small class="muted">${esc(v.marca||'')} ${esc(v.modelo||'')}${v.cor ? ' · '+esc(v.cor) : ''}</small>
-            </div>
-            <button class="mini" onclick="openVehicleFromClient('${v.id}')">Abrir</button>
-          </div>`).join('') : '<div class="muted" style="padding:12px 0">Sem viaturas associadas.</div>'}
-
-          <div class="associateVehicleBox">
-            <strong>Adicionar ou associar viatura</strong>
-            <p class="associateVehicleHint">Introduza a matrícula. Pode associar uma viatura já registada ou criar uma nova já ligada a este cliente.</p>
-            <input id="${plateInput}" class="uppercase" placeholder="00-AA-00" autocomplete="off">
-            <div class="associateVehicleActions">
-              <button class="btn secondary" onclick="associateVehicleByPlateEnhanced('${c.id}','${plateInput}','${msgId}')">Associar existente</button>
-              <button class="btn primary" onclick="newVehicleForClientEnhanced('${c.id}','${plateInput}')">＋ Criar nova viatura</button>
-            </div>
-            <div id="${msgId}"></div>
-          </div>
-        </div>
-      </div>`;
-    }).join('') : '<div class="empty">Ainda não existem clientes.</div>';
-  };
-
-  window.associateVehicleByPlateEnhanced = async function(clientId,inputId,msgId){
-    const box = $(msgId);
-    box.innerHTML = '';
-    const raw = $(inputId).value.trim();
-    if(!raw){
-      box.innerHTML = '<div class="error">Introduza a matrícula.</div>';
-      return;
-    }
-
-    await loadVehicles(false);
-    const vehicle = vehicles.find(v => plateKeyClient(v.matricula) === plateKeyClient(raw));
-
-    if(!vehicle){
-      box.innerHTML = '<div class="error">Esta matrícula ainda não está registada. Use “Criar nova viatura”.</div>';
-      return;
-    }
-
-    if(vehicle.cliente_id === clientId){
-      box.innerHTML = '<div class="ok">✓ Esta viatura já está associada a este cliente.</div>';
-      return;
-    }
-
-    const target = clients.find(c => c.id === clientId);
-    if(vehicle.cliente_id){
-      const current = clients.find(c => c.id === vehicle.cliente_id);
-      const ok = confirm(`A matrícula ${vehicle.matricula} está associada a ${current?.nome || 'outro cliente'}. Pretende transferi-la para ${target?.nome || 'este cliente'}?`);
-      if(!ok) return;
-    }
-
-    const {error} = await sb.from('oficina_viaturas')
-      .update({cliente_id:clientId,atualizado_em:new Date().toISOString()})
-      .eq('id',vehicle.id);
-
-    if(error){
-      box.innerHTML = `<div class="error">${esc(error.message)}</div>`;
-      return;
-    }
-
-    await loadVehicles(false);
-    renderClients();
-    await loadDashboard();
-  };
-
-  window.newVehicleForClientEnhanced = function(clientId,inputId){
-    const plate = $(inputId)?.value.trim().toUpperCase() || '';
-    showView('vehiclesView');
-    setTimeout(() => window.openVehicleForm(null,clientId,plate),80);
-  };
-
-  if($('clientSearch')) $('clientSearch').placeholder='Pesquisar nome, email, telemóvel, NIF ou matrícula';
-  ensureClientPicker();
+  if($('clientSearch'))$('clientSearch').placeholder='Pesquisar nome, email, telemóvel, NIF ou matrícula';
+  ensureDetailViews();ensureDropdownSuggestions();ensureClientPicker();
 })();
