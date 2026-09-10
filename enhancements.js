@@ -32,6 +32,9 @@
     const select = $('vehicleClient');
     if(!select || $('vehicleClientSearchEnhanced')) return;
 
+    const label = select.previousElementSibling;
+    if(label && label.tagName==='LABEL') label.innerHTML='Associar a cliente <span class="required">*</span>';
+
     const wrap = document.createElement('div');
     wrap.className = 'vehicleClientPicker';
     wrap.innerHTML = `
@@ -215,5 +218,6 @@
     setTimeout(() => window.openVehicleForm(null,clientId,plate),80);
   };
 
+  if($('clientSearch')) $('clientSearch').placeholder='Pesquisar nome, email, telemóvel, NIF ou matrícula';
   ensureClientPicker();
 })();
